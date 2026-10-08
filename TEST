@@ -1,0 +1,95 @@
+def registrar_tramite(pos_usuario, tipo, datos, adjunto):
+    if roles[pos_usuario] != "ciudadano":
+        return "Error: Solo los ciudadanos pueden registrar trámites."
+    
+    pt = buscar_posicion(tipos_nombres, tipo)
+    if pt == -1:
+        return "Error: Tipo de trámite no válido."
+    
+    campos = tipos_campos[pt]
+    if len(datos) != len(campos):
+        return "Error: Cantidad de datos incorrecta."
+        
+    for i in range(len(datos)):
+        if datos[i].strip() == "":
+            return f"Error: El campo '{campos[i]}' no puede estar vacío."
+            
+    if not extension_valida(adjunto):
+        return "Error: Extensión del adjunto no permitida."
+
+    # Crear código
+    codigo = f"{fecha_actual()[:4]}-{str(len(tramites_codigos) + 1).zfill(5)}"
+    lineas = [f"{campos[i]}: {datos[i]}" for i in range(len(campos))]
+
+    tramites_codigos.append(codigo)
+    tramites_documentos.append(documentos[pos_usuario])
+    tramites_tipos.append(tipo)
+    tramites_datos.append(lineas)
+    tramites_adjuntos.append(adjunto)
+    tramites_estados.append("Registrado")
+    tramites_areas.append("Mesa de partes")
+    tramites_responsables.append("")
+    tramites_fechas.append(fecha_actual())
+
+    # Registrar en historial
+    hist_codigos.append(codigo)
+    hist_fechas.append(fecha_actual())
+    hist_usuarios.append(usuarios[pos_usuario])
+    hist_acciones.append("registrar")
+    hist_mensajes.append("Trámite registrado")
+
+    return codigo
+
+def cambiar_estado(codigo, accion, pos_actor, mensaje="", area_destino=""):
+    pt = buscar_posicion(tramites_codigos, codigo)
+    if pt == -1:
+        return "Error: Trámite no encontrado."
+
+    estado_actual = tramites_estados[pt]
+    rol_actor = roles[pos_actor]
+
+    # Buscar transición válida
+    transicion = None
+    for orig, acc, rol, dest in TRANSICIONES:
+        if orig == estado_actual and acc == accion:
+            transicion = (orig, acc, rol, dest)
+            break
+
+    if not transicion:
+        return f"Error: La acción '{accion}' no es válida para el estado '{estado_actual}'."
+
+    if rol_actor != transicion[2]:
+        return f"Error: Se requiere rol de '{transicion[2]}' para realizar esta acción."
+
+    # Validaciones adicionales para trabajadores
+    if rol_actor == "trabajador":
+        if areas_usuario[pos_actor] != tramites_areas[pt]:
+            return "Error: El trámite no pertenece a su área asignada."
+        if estado_actual == "En proceso" and tramites_responsables[pt] != usuarios[pos_actor]:
+            return "Error: Solo el responsable actual puede gestionar este trámite."
+
+    if accion != "tomar" and mensaje.strip() == "":
+        return "Error: Debe ingresar un mensaje para esta acción."
+
+    if accion == "derivar":
+        if buscar_posicion(areas_nombres, area_destino) == -1:
+            return "Error: Área de destino no válida."
+
+    # Aplicar cambios
+    nuevo_estado = transicion[3]
+    tramites_estados[pt] = nuevo_estado
+    
+    if accion == "derivar":
+        tramites_areas[pt] = area_destino
+        tramites_responsables[pt] = ""
+    elif accion == "tomar":
+        tramites_responsables[pt] = usuarios[pos_actor]
+
+    # Guardar en el historial
+    hist_codigos.append(codigo)
+    hist_fechas.append(fecha_actual())
+    hist_usuarios.append(usuarios[pos_actor])
+    hist_acciones.append(accion)
+    hist_mensajes.append(mensaje if mensaje else f"Trámite {accion} con éxito.")
+
+    return "ok"
