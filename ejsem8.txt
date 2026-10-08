@@ -1,0 +1,108 @@
+"""
+
+Enunciado 1 – Registro de Productos con Arreglos Paralelos
+Crea tres arreglos paralelos para almacenar información de 4 productos: nombres, precios y cantidades en stock.
+Imprime un reporte que muestre cada producto con su precio y cantidad en una sola línea por producto.
+Además, calcula e imprime el precio total del inventario (precio × cantidad para todos).
+
+"""
+
+listas_nombres=["Laptop","Mouse","Monitor","Teclado"]
+listas_precios=[2000,150,400,150]
+listas_stock=[5,10,2,5]
+
+precio_total=0
+
+for i in range(len(listas_nombres)):
+    print(f"Producto: {listas_nombres[i]} | Precio: {listas_precios[i]} | Stock: {listas_stock[i]}")
+    precio_total+=listas_precios[i]*listas_stock[i]
+
+print(f"Precio total del inventario de productos: {precio_total}")
+
+
+
+"""
+
+Enunciado 2 – Ordenamiento Alfanumérico de Nombres
+Dada la lista de nombres: ['Carlos','ana','Beatriz','david','Elena']
+1) Imprímela sin modificar.
+2) Ordénala alfabéticamente ignorando mayúsculas con sort().
+3) Crea una nueva lista ordenada en orden descendente usando sorted().
+4) Muestra los resultados de cada paso.
+
+"""
+
+nombres=['Carlos','ana','Beatriz','david','Elena']
+
+print("Lista sin modificar:")
+print("  ",nombres)
+
+print("Se ordena alfabéticamente ignorando mayúsculas con sort():")
+nombres.sort(key=str.lower)
+print("  ",nombres)
+
+print("Se crea una nueva lista ordenada en orden descendente usando sorted():")
+nueva= sorted(nombres,key=str.lower,reverse=True)
+print("  ",nueva)
+
+
+
+
+
+
+
+
+"""
+
+Enunciado 3 – Búsqueda Simple en una Lista de Emails
+Tienes la lista: emails = ['ana@gmail.com','luis@outlook.com','mia@gmail.com','juan@yahoo.com']
+1) Imprime cuántos emails son de Gmail.
+2) Muestra solo los emails que terminan en '.com'.
+3) Verifica si 'luis@outlook.com' está en la lista (usa 'in').
+
+"""
+
+emails = ['ana@gmail.com','luis@outlook.com','mia@gmail.com','juan@yahoo.com']
+gmailcont=0
+for mail in emails:
+    if mail.endswith("gmail.com"):
+        gmailcont+=1
+        
+print("Cantidad de emails que son de gmail:",gmailcont)
+
+print("Emails que terminan en .com:")
+for mail in emails:
+    if mail.endswith(".com"):
+        print(mail)
+
+
+if "luis@outlook.com" in emails:
+    
+    print("El correo 'luis@outlook.com' está en la lista")
+
+
+
+"""
+
+Enunciado 4 – Lista de Diccionario de Estudiantes
+Crea una lista de diccionarios para 4 estudiantes con los campos: 'nombre', 'carrera' y 'promedio'.
+Imprime el nombre y promedio de cada estudiante.
+Luego muestra el nombre del estudiante con el promedio más alto.
+
+"""
+
+estudiantes=[
+
+    {"nombre" :"Alejandro","carrera":"Ing sistemas","promedio":13},
+    {"nombre" :"Valeria","carrera":"Ing software","promedio":15},
+    {"nombre" :"Karina","carrera":"Ing industrial","promedio":18}
+]
+
+prom_alto=0
+for i in range(len(estudiantes)):
+    
+    print(f"Nombre {estudiantes[i]["nombre"]} | Promedio {estudiantes[i]["promedio"]}")
+
+    if estudiantes[i]["promedio"]>prom_alto:
+        prom_alto=estudiantes[i]["promedio"]
+        
